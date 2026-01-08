@@ -3,14 +3,12 @@ import pandas as pd
 import time
 import paho.mqtt.client as mqtt
 
-# Tópico para subscrever (mesmo que o publicador usa)
 METRIC_TOPIC = "monitor/desempenho/cpu_uso"
 BROKER_HOSTNAME = "mqtt.eclipseprojects.io"
 OUTPUT_FILE = "dados_monitoramento_cpu.csv" # Nome do arquivo para persistir os dados
 MESSAGES_TO_SAVE = 10 # Salva a cada 10 mensagens recebidas
 
 # Criacao de um DataFrame para coleta de dados
-# Adicionei uma coluna para o status/alerta
 df_monitoramento = pd.DataFrame(columns = ['timestamp', 'cpu_uso', 'variacao_perc', 'status_alerta'])
 
 # Variável global para armazenar o valor anterior da CPU para cálculo da variação
@@ -93,7 +91,6 @@ client.connect(BROKER_HOSTNAME)
 
 # Metodo que gerencia a conexao com o broker
 # Usamos loop_forever() para manter o assinante escutando.
-# Uma alternativa seria loop_start() com um loop while True para outras operações.
 try:
     client.loop_forever()
 except KeyboardInterrupt:
@@ -102,4 +99,5 @@ except KeyboardInterrupt:
     if not df_monitoramento.empty:
         print(f"\n--- Salvando dados remanescentes em '{OUTPUT_FILE}' ---")
         df_monitoramento.to_csv(OUTPUT_FILE, mode='a', header=not pd.io.common.file_exists(OUTPUT_FILE), index=False)
+
     client.disconnect()
