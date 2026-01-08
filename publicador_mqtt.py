@@ -40,15 +40,10 @@ def send_metric():
 # Cricacao do objeto client do mqtt e definicao das funcoes de callback
 client = mqtt.Client()
 client.on_connect = on_connect
-# Não precisamos de on_message para o publicador neste caso, pois ele apenas publica.
-# client.on_message = on_message # Remova ou comente esta linha
 
 # Conexao com o broker
 client.connect(BROKER_HOSTNAME)
 
-# O loop principal para enviar métricas periodicamente
-# Usamos loop_start() para que o cliente paho rode em segundo plano,
-# permitindo que o script continue a enviar dados no loop principal.
 client.loop_start()
 
 try:
@@ -58,4 +53,5 @@ try:
 except KeyboardInterrupt:
     print("Publicador encerrado.")
     client.loop_stop()
+
     client.disconnect()
